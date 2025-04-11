@@ -6,15 +6,21 @@ import * as vscode from 'vscode';
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-		console.log('Congratulations, your extension "pascal-snake-casify" is now active!');
-
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with registerCommand
 	// The commandId parameter must match the command field in package.json
 	let disposable = vscode.commands.registerCommand('extension.pascal-snake-casify', () => {
 		const editor: any = vscode.window.activeTextEditor;
+
+		// If there is no active selection, select the word under the cursor
+		if (editor.selection.isEmpty) {
+			const cursorPosition = editor.selection.active;
+			const wordRange = editor.document.getWordRangeAtPosition(cursorPosition);
+			if (wordRange) {
+				editor.selection = new vscode.Selection(wordRange.start, wordRange.end);
+			}
+		}
+
 		const text = editor.document.getText(editor.selection);
 		const words: any = text.match(/[\d\.]+|\D+/g);
 		let result: any = [];
@@ -31,4 +37,4 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 // this method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() { }
